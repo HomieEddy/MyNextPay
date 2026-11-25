@@ -1420,3 +1420,8 @@ a.wcard {
 .tabs {
   grid-template-columns: repeat(5, 1fr);
 }
+/* Vaul drives the sheet's motion and drag; keep only the mockup's look. */
+.sheet.vd {
+  transform: none;
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}

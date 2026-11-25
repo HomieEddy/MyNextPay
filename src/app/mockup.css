@@ -544,7 +544,8 @@ input:focus-visible {
   font-size: 14px;
   color: var(--mute);
 }
-.seg button.on {
+.seg button.on,
+.seg button[data-state="on"] {
   background: #fff;
   color: var(--ink);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -969,6 +970,8 @@ h1.vt {
   grid-template-columns: repeat(3, 1fr);
 }
 .sw2 {
+  border: 0;
+  padding: 0;
   appearance: none;
   -webkit-appearance: none;
   width: 51px;
@@ -981,7 +984,11 @@ h1.vt {
   cursor: pointer;
   margin: 0;
 }
-.sw2::after {
+.sw2-thumb {
+  display: block;
+}
+.sw2::after,
+.sw2-thumb {
   content: "";
   position: absolute;
   top: 2px;
@@ -993,10 +1000,12 @@ h1.vt {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.sw2:checked {
+.sw2:checked,
+.sw2[data-state="checked"] {
   background: var(--green);
 }
-.sw2:checked::after {
+.sw2:checked::after,
+.sw2[data-state="checked"] .sw2-thumb {
   transform: translateX(20px);
 }
 .grp {
@@ -1419,4 +1428,7 @@ a.wcard {
 }
 .tabs {
   grid-template-columns: repeat(5, 1fr);
+}
+.sw2[role="switch"]::after {
+  content: none;
 }

@@ -1,45 +1,29 @@
-import {
-  type Cycle,
-  cycleFor,
-  daysLeft,
-  type PayFrequency,
-  paySchedule,
-} from "./cycles";
+import { type Cycle, cycleFor, daysLeft, type PayFrequency } from "./cycles";
 import { type IsoDate, isBetween } from "./dates";
 import { type Cents, sumCents } from "./money";
+import {
+  type Occurrence,
+  occurrencesOf,
+  paycheckItem,
+  type ScheduledItem,
+} from "./occurrences";
 import {
   dailyAllowance,
   ledgerBalance,
   ledgerSafeToSpend,
   simpleSafeToSpend,
 } from "./safe-to-spend";
-import { occurrencesBetween, type Schedule } from "./schedules";
 import { type CycleStatus, cycleStatus } from "./status";
 
-export type TrackingMode = "simple" | "ledger";
+export type { Occurrence, ScheduledItem } from "./occurrences";
+export { paidKey } from "./occurrences";
 
-export type ScheduledItem = {
-  id: number;
-  name: string;
-  category: string;
-  amount: Cents;
-  schedule: Schedule;
-  autoPay: boolean;
-};
+export type TrackingMode = "simple" | "ledger";
 
 export type LedgerEntry = {
   kind: "expense" | "income" | "unexpected";
   amount: Cents;
   date: IsoDate;
-};
-
-export type Occurrence = {
-  itemId: number;
-  name: string;
-  category: string;
-  amount: Cents;
-  date: IsoDate;
-  paid: boolean;
 };
 
 export type CycleInput = {
@@ -71,33 +55,10 @@ export type CycleSummary = {
   bills: Cents;
   spent: Cents;
   billOccurrences: Occurrence[];
+  incomeOccurrences: Occurrence[];
   days: number;
   dailyAllowance: Cents;
 };
-
-export function paidKey(itemId: number, date: IsoDate): string {
-  return `${itemId}:${date}`;
-}
-
-function occurrencesOf(
-  items: ScheduledItem[],
-  from: IsoDate,
-  to: IsoDate,
-  today: IsoDate,
-  paidKeys: ReadonlySet<string>,
-): Occurrence[] {
-  return items.flatMap((item) =>
-    occurrencesBetween(item.schedule, from, to).map((date) => ({
-      itemId: item.id,
-      name: item.name,
-      category: item.category,
-      amount: item.amount,
-      date,
-      paid:
-        paidKeys.has(paidKey(item.id, date)) || (item.autoPay && date < today),
-    })),
-  );
-}
 
 function totalOf(rows: Occurrence[]): Cents {
   return sumCents(rows.map((row) => row.amount));
@@ -149,14 +110,7 @@ function ledgerSafe(
 export function computeCycle(input: CycleInput): CycleSummary {
   const { today, paidKeys, mode } = input;
   const cycle = cycleFor(input.anchor, input.frequency, today, input.offset);
-  const paycheck: ScheduledItem = {
-    id: 0,
-    name: "Paycheck",
-    category: "Income",
-    amount: input.payAmount,
-    schedule: paySchedule(input.anchor, input.frequency),
-    autoPay: true,
-  };
+  const paycheck = paycheckItem(input.anchor, input.frequency, input.payAmount);
   const incomeItems = [paycheck, ...input.incomes];
   const bills = occurrencesOf(
     input.bills,
@@ -211,6 +165,7 @@ export function computeCycle(input: CycleInput): CycleSummary {
     bills: billTotal,
     spent,
     billOccurrences: bills,
+    incomeOccurrences: incomes,
     days,
     dailyAllowance: dailyAllowance(safeToSpend, Math.max(1, days)),
   };

@@ -7,7 +7,7 @@ import { shortDate } from "./format-date";
 import { type HomeCard, homeCards } from "./home-cards";
 
 export const MIN_OFFSET = -2;
-export const MAX_OFFSET = 2;
+export const MAX_OFFSET = 5;
 
 /** The cycle offset from the `?c=` search param. Anything out of range means the current cycle. */
 export function parseOffset(value: string | string[] | undefined): number {
@@ -22,6 +22,11 @@ export function parseOffset(value: string | string[] | undefined): number {
 export function offsetHref(offset: number): string | null {
   if (offset < MIN_OFFSET || offset > MAX_OFFSET) return null;
   return offset === 0 ? "/" : `/?c=${offset}`;
+}
+
+/** Link that opens a sheet over the Home cycle at `offset`. */
+export function sheetHref(offset: number, sheet: string): string {
+  return offset === 0 ? `/?sheet=${sheet}` : `/?c=${offset}&sheet=${sheet}`;
 }
 
 export type HomeView = {
@@ -97,6 +102,6 @@ export function toHomeView(summary: CycleSummary, context: Context): HomeView {
     dailyValue: formatMoney(summary.dailyAllowance),
     dailyLabel: simple ? "daily budget" : "a day",
     banner: banner(summary, context, left.value),
-    cards: homeCards(summary),
+    cards: homeCards(summary, (sheet) => sheetHref(context.offset, sheet)),
   };
 }

@@ -1,13 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireSession } from "../../auth/require-session";
+import { z } from "zod";
 import { getDb } from "../../db/client";
 import { deleteEntry } from "../../repos/entry-repo";
+import { authedAction } from "../safe-action";
 
-export async function removeEntry(id: number): Promise<void> {
-  await requireSession();
-  if (!Number.isInteger(id) || id <= 0) return;
-  deleteEntry(getDb(), id);
-  revalidatePath("/", "layout");
-}
+export const removeEntry = authedAction
+  .inputSchema(z.number().int().positive())
+  .action(async ({ parsedInput: id }) => {
+    deleteEntry(getDb(), id);
+    revalidatePath("/", "layout");
+  });

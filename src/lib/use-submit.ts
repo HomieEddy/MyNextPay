@@ -1,9 +1,14 @@
 import { useState, useTransition } from "react";
-import { type ActionResult, idle } from "./action-result";
+import {
+  type ActionResult,
+  idle,
+  type SafeResult,
+  toActionResult,
+} from "./action-result";
 
 /** Runs a server action from a client form and remembers its result. */
 export function useSubmit<T>(
-  action: (input: T) => Promise<ActionResult>,
+  action: (input: T) => Promise<SafeResult | undefined>,
   onDone: () => void,
 ) {
   const [result, setResult] = useState<ActionResult>(idle);
@@ -11,7 +16,7 @@ export function useSubmit<T>(
 
   function submit(input: T) {
     startTransition(async () => {
-      const next = await action(input);
+      const next = toActionResult(await action(input));
       setResult(next);
       if (next.ok) onDone();
     });

@@ -1,11 +1,12 @@
 "use server";
 
-import { requireSession } from "../../auth/require-session";
+import { z } from "zod";
 import { getDb } from "../../db/client";
 import { deleteRecurringItem } from "../../repos/recurring-repo";
+import { authedAction } from "../safe-action";
 
-export async function removeRecurringItem(id: number): Promise<void> {
-  await requireSession();
-  if (!Number.isInteger(id) || id <= 0) return;
-  deleteRecurringItem(getDb(), id);
-}
+export const removeRecurringItem = authedAction
+  .inputSchema(z.number().int().positive())
+  .action(async ({ parsedInput: id }) => {
+    deleteRecurringItem(getDb(), id);
+  });

@@ -1,3 +1,8 @@
+"use client";
+
+import * as RadixSwitch from "@radix-ui/react-switch";
+
+/** iOS-style on/off switch. Radix gives it the switch role and keyboard support. */
 export function Switch({
   id,
   checked,
@@ -8,12 +13,13 @@ export function Switch({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <input
+    <RadixSwitch.Root
       id={id}
-      type="checkbox"
       className="sw2"
       checked={checked}
-      onChange={(event) => onChange(event.target.checked)}
-    />
+      onCheckedChange={onChange}
+    >
+      <RadixSwitch.Thumb className="sw2-thumb" />
+    </RadixSwitch.Root>
   );
 }

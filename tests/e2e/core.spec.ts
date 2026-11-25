@@ -10,8 +10,8 @@ async function signIn(page: Page) {
 
 test("marking a bill paid keeps safe-to-spend the same", async ({ page }) => {
   await signIn(page);
-  await page.waitForTimeout(1200); // let the count-up settle
-  const before = await page.locator(".big").textContent();
+  const amount = page.locator(".big .sr-only");
+  const before = await amount.textContent();
   await page.getByRole("link", { name: /^Bills/ }).click();
   await page.getByRole("button", { name: "Mark Rent paid" }).click();
   await expect(
@@ -19,7 +19,7 @@ test("marking a bill paid keeps safe-to-spend the same", async ({ page }) => {
   ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByText("1 of 1 paid")).toBeVisible();
-  await expect(page.locator(".big")).toHaveText(before ?? "");
+  await expect(amount).toHaveText(before ?? "");
 });
 
 test("logging an unexpected expense lowers safe-to-spend", async ({ page }) => {

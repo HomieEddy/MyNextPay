@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 const SESSION_COOKIE = "nextpay_session";
-const PUBLIC_PATHS = ["/login", "/onboarding", "/api/health"];
+const PUBLIC_PATHS = ["/login", "/onboarding", "/api/health", "/offline"];
 
 /** Quick check only: no cookie means sign in. Pages still verify the session. */
 export function proxy(request: NextRequest) {
@@ -15,6 +15,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|icons/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|icons/).*)",
   ],
 };

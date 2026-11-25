@@ -48,3 +48,9 @@ next-env.d.ts
 # playwright
 /test-results
 /playwright-report
+
+# caches from the GitHub initial commit
+.cache
+.eslintcache
+.swc
+.turbo

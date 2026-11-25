@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { LogInForm } from "@/components/features/auth/log-in-form";
-import { ScreenHeading } from "@/components/ui/screen-heading";
+import { IntroHeading } from "@/components/ui/intro-heading";
 import { logIn } from "@/server/actions/auth/log-in";
 import { hasValidSession } from "@/server/auth/session";
 import { getDb } from "@/server/db/client";
@@ -12,7 +12,7 @@ export default async function LoginPage() {
 
   return (
     <>
-      <ScreenHeading
+      <IntroHeading
         title="Welcome back"
         intro="Enter your password to open NextPay."
       />

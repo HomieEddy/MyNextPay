@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { LogOutButton } from "@/components/features/auth/log-out-button";
 import { SettingsForm } from "@/components/features/settings/settings-form";
 import { ScreenHeading } from "@/components/ui/screen-heading";
+import { SettingsList } from "@/components/ui/settings-list";
 import { toProfileInput } from "@/lib/profile-input";
 import { logOut } from "@/server/actions/auth/log-out";
 import { getDb } from "@/server/db/client";
@@ -21,9 +22,9 @@ export default function SettingsPage() {
       <SettingsForm
         initial={toProfileInput(settings, findUser(db)?.name ?? "")}
       />
-      <div className="mt-8">
+      <SettingsList title="Account">
         <LogOutButton action={logOut} />
-      </div>
+      </SettingsList>
     </>
   );
 }

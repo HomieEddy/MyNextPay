@@ -13,17 +13,17 @@ test("first run sets a password and pay profile, then sign out and back in", asy
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL(/\/setup$/);
 
-  await page.getByLabel("Pay amount, after tax").fill("2150");
+  await page.getByLabel("Take-home pay").fill("2150");
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
 
-  await page.getByRole("button", { name: "Add a bill" }).click();
-  await page.getByLabel("Bill", { exact: true }).fill("Rent");
-  await page.getByLabel("Amount", { exact: true }).fill("1200");
-  await page.getByRole("button", { name: "Finish" }).click();
+  await page.getByRole("button", { name: "Rent" }).click();
+  await page.getByLabel("Rent amount").fill("1200");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "See my number" }).click();
 
   await expect(page.getByText("Safe to spend")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();
+  await expect(page.getByText("Bills", { exact: true })).toBeVisible();
 
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Sign out" }).click();

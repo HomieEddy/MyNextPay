@@ -1,23 +1,12 @@
-import type { ReactNode } from "react";
+import type { CycleStatus } from "@/domain/status";
 
-const TONES = {
-  green: "bg-green-soft text-green",
-  orange: "bg-orange-soft text-orange-ink",
-  neutral: "bg-screen text-mute",
-};
-
+/** Status pill with a dot. The label is always shown, never color alone. */
 export function Chip({
-  tone = "neutral",
-  children,
+  status,
+  label,
 }: {
-  tone?: keyof typeof TONES;
-  children: ReactNode;
+  status: CycleStatus;
+  label: string;
 }) {
-  return (
-    <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${TONES[tone]}`}
-    >
-      {children}
-    </span>
-  );
+  return <span className={`chip ${status}`}>{label}</span>;
 }

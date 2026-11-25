@@ -4,20 +4,12 @@ type ButtonProps = ComponentProps<"button"> & {
   variant?: "primary" | "ghost";
 };
 
-const VARIANTS = {
-  primary: "bg-green text-white",
-  ghost: "bg-card text-green",
-};
-
 export function Button({
   variant = "primary",
   className = "",
+  type = "button",
   ...props
 }: ButtonProps) {
-  return (
-    <button
-      className={`min-h-[50px] w-full rounded-2xl text-base font-bold transition-opacity disabled:opacity-40 ${VARIANTS[variant]} ${className}`}
-      {...props}
-    />
-  );
+  const look = variant === "ghost" ? "btn ghost" : "btn";
+  return <button type={type} className={`${look} ${className}`} {...props} />;
 }

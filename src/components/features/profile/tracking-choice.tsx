@@ -1,15 +1,22 @@
 import type { TrackingMode } from "@/domain/cycle-summary";
 
-const OPTIONS: { value: TrackingMode; title: string; body: string }[] = [
+const OPTIONS: {
+  value: TrackingMode;
+  title: string;
+  body: string;
+  tag: string;
+}[] = [
   {
     value: "simple",
     title: "Just my paychecks",
-    body: "Each payday starts fresh. Bills log themselves. You add only big one-offs.",
+    body: "Each payday starts fresh. Your paycheck minus that cycle's bills is what you can spend. Only log the big surprises, like a car repair.",
+    tag: "Low effort",
   },
   {
     value: "ledger",
-    title: "My bank balance",
-    body: "Follows your real balance. Needs every transaction logged.",
+    title: "Follow my bank balance",
+    body: "Start from your real balance and log every expense and income. The most exact, but it takes discipline.",
+    tag: "Most exact",
   },
 ];
 
@@ -21,24 +28,20 @@ export function TrackingChoice({
   onChange: (mode: TrackingMode) => void;
 }) {
   return (
-    <fieldset aria-label="How to track" className="space-y-3">
-      {OPTIONS.map((option) => {
-        const selected = option.value === value;
-        return (
-          <button
-            key={option.value}
-            type="button"
-            aria-pressed={selected}
-            onClick={() => onChange(option.value)}
-            className={`block w-full rounded-card border-2 bg-card p-4 text-left ${
-              selected ? "border-green" : "border-transparent"
-            }`}
-          >
-            <p className="font-bold">{option.title}</p>
-            <p className="mt-1 text-sm text-mute">{option.body}</p>
-          </button>
-        );
-      })}
+    <fieldset aria-label="How to track">
+      {OPTIONS.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          aria-pressed={option.value === value}
+          className={`opt ${option.value === value ? "on" : ""}`}
+          onClick={() => onChange(option.value)}
+        >
+          <b>{option.title}</b>
+          <span className="d">{option.body}</span>
+          <span className="tag">{option.tag}</span>
+        </button>
+      ))}
     </fieldset>
   );
 }

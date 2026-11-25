@@ -4,7 +4,5 @@ export const dynamic = "force-dynamic";
 
 export default async function SetupLayout({ children }: LayoutProps<"/">) {
   await requireSession();
-  return (
-    <main className="mx-auto w-full max-w-md px-5 pt-10 pb-10">{children}</main>
-  );
+  return <main className="mx-auto w-full max-w-md">{children}</main>;
 }

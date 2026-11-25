@@ -1,6 +1,6 @@
 export function FormMessage({ message }: { message?: string }) {
   return (
-    <p role="alert" className="min-h-5 text-[13px] text-red-ink">
+    <p role="alert" className="err">
       {message}
     </p>
   );

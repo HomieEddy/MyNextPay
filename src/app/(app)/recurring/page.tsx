@@ -1,31 +1,45 @@
-import Link from "next/link";
 import { RecurringList } from "@/components/features/recurring/recurring-list";
+import { AddLink } from "@/components/ui/add-link";
 import { ScreenHeading } from "@/components/ui/screen-heading";
+import { SegmentedLinks } from "@/components/ui/segmented-links";
 import { getDb } from "@/server/db/client";
 import { loadRecurringRows } from "@/server/queries/load-recurring-rows";
 import { appToday } from "@/server/today";
 
 export const dynamic = "force-dynamic";
 
-export default function RecurringPage() {
+export default async function RecurringPage({
+  searchParams,
+}: PageProps<"/recurring">) {
+  const { t } = await searchParams;
+  const income = t === "income";
   const { bills, incomes } = loadRecurringRows(getDb(), appToday());
+  const newHref = income ? "/recurring/new?kind=income" : "/recurring/new";
   return (
     <>
       <ScreenHeading
         title="Recurring"
-        intro="Bills and paychecks that repeat. NextPay counts them for you."
+        action={<AddLink href={newHref} label="Add a recurring item" />}
       />
-      <Link
-        href="/recurring/new"
-        className="flex min-h-12 items-center justify-center rounded-2xl bg-orange font-bold text-white"
-      >
-        Add a bill or income
-      </Link>
-      <RecurringList title="Bills" rows={bills} empty="No bills yet." />
+      <SegmentedLinks
+        label="Kind"
+        links={[
+          { href: "/recurring", label: "Bills", active: !income },
+          {
+            href: "/recurring?t=income",
+            label: "Income streams",
+            active: income,
+          },
+        ]}
+      />
       <RecurringList
-        title="Income"
-        rows={incomes}
-        empty="No extra income yet."
+        rows={income ? incomes : bills}
+        income={income}
+        empty={
+          income
+            ? "No income streams yet. Your paycheck is counted already."
+            : "No bills yet."
+        }
       />
     </>
   );

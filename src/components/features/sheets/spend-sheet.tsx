@@ -8,12 +8,14 @@ export function SpendSheet({
   caption,
   entries,
   simple,
+  editHref,
 }: {
   parts: DonutPart[];
   center: string;
   caption: string;
   entries: EntryRow[];
   simple: boolean;
+  editHref: (id: number) => string;
 }) {
   return (
     <>
@@ -21,6 +23,7 @@ export function SpendSheet({
       <div className="sec">{simple ? "Unexpected expenses" : "Ledger"}</div>
       <EntryList
         rows={entries}
+        editHref={editHref}
         empty={
           simple
             ? "None this cycle. Use the orange + for big one-offs like a car repair."

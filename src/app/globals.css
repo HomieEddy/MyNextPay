@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* Design tokens from docs/design/mockup.html. Use these names; never hard-code hex in components. */
+@theme {
+  --color-screen: #f4f5f2;
+  --color-card: #ffffff;
+  --color-ink: #18201c;
+  --color-mute: #5a645e;
+  --color-line: #dce0da;
+  --color-green: #2e6a4e;
+  --color-green-soft: #dceadf;
+  --color-orange: #d9661f;
+  --color-orange-ink: #9a4510;
+  --color-orange-soft: #fbe6d6;
+  --color-red-ink: #a3261a;
+  --color-red-soft: #f8ddd9;
+  --color-char: #3b433f;
+  --color-sage: #8fb09a;
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  --radius-card: 20px;
+  --radius-sheet: 28px;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-screen);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: reduced motion must win over component styles */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reduced motion must win over component styles */
+    transition-duration: 0.01ms !important;
+  }
+}

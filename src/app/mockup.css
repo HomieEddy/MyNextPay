@@ -107,9 +107,17 @@ input:focus-visible {
   gap: 8px;
 }
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 800;
   font-size: 22px;
   letter-spacing: -0.02em;
+}
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  flex: none;
 }
 .icon-btn {
   width: 44px;

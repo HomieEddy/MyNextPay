@@ -20,3 +20,7 @@ export function createUser(
     .values({ id: USER_ID, ...input })
     .run();
 }
+
+export function setUserName(db: Db, name: string) {
+  db.update(user).set({ name }).where(eq(user.id, USER_ID)).run();
+}

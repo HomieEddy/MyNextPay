@@ -1,5 +1,11 @@
-import { addMonths, addWeeks, differenceInCalendarMonths } from "date-fns";
+import {
+  addMonths,
+  addWeeks,
+  differenceInCalendarMonths,
+  getDay,
+} from "date-fns";
 import { addDays, daysBetween, type IsoDate, toDate, toIsoDate } from "./dates";
+import type { Schedule } from "./schedules";
 
 export type PayFrequency = "weekly" | "biweekly" | "monthly";
 
@@ -67,4 +73,24 @@ export function cycleFor(
 /** Days from `day` until the next payday. */
 export function daysLeft(cycle: Cycle, day: IsoDate): number {
   return daysBetween(day, cycle.nextPayday);
+}
+
+/** The paycheck as a schedule, so pay is counted like any other income. */
+export function paySchedule(
+  anchor: IsoDate,
+  frequency: PayFrequency,
+): Schedule {
+  if (frequency === "monthly") {
+    return {
+      kind: "monthly",
+      dayOfMonth: toDate(anchor).getDate(),
+      startDate: anchor,
+    };
+  }
+  return {
+    kind: "weekly",
+    weekday: getDay(toDate(anchor)),
+    everyWeeks: frequency === "weekly" ? 1 : 2,
+    startDate: anchor,
+  };
 }

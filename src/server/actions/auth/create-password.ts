@@ -31,5 +31,5 @@ export async function createPassword(
     passwordHash: await hashPassword(parsed.data.password),
   });
   await startSession();
-  redirect("/");
+  redirect("/setup");
 }

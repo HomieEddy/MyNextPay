@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const PASSWORD = "Homelab2026!";
 
-test("first run sets a password, then sign out and back in", async ({
+test("first run sets a password and pay profile, then sign out and back in", async ({
   page,
 }) => {
   await page.goto("/");
@@ -11,10 +11,21 @@ test("first run sets a password, then sign out and back in", async ({
   await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
   await page.getByLabel("Confirm password").fill(PASSWORD);
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(
-    page.getByRole("heading", { name: "You're signed in" }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/setup$/);
 
+  await page.getByLabel("Pay amount, after tax").fill("2150");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  await page.getByRole("button", { name: "Add a bill" }).click();
+  await page.getByLabel("Bill", { exact: true }).fill("Rent");
+  await page.getByLabel("Amount", { exact: true }).fill("1200");
+  await page.getByRole("button", { name: "Finish" }).click();
+
+  await expect(page.getByText("Safe to spend")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/login$/);
 
@@ -24,9 +35,7 @@ test("first run sets a password, then sign out and back in", async ({
 
   await page.getByLabel("Password").fill(PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(
-    page.getByRole("heading", { name: "You're signed in" }),
-  ).toBeVisible();
+  await expect(page.getByText("Safe to spend")).toBeVisible();
 });
 
 test("onboarding is closed once a password exists", async ({ page }) => {

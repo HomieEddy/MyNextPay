@@ -1,0 +1,12 @@
+services:
+  nextpay:
+    build: .
+    container_name: nextpay
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      TZ: ${TZ:-America/Toronto}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+    volumes:
+      - ./data:/data

@@ -30,9 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
-.env
+# env files (can opt-in for committing if needed)
+.env*
 
 # vercel
 .vercel
@@ -41,8 +40,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# cache
+# app data
+/data
+*.db
+*.db-*
+
+# playwright
+/test-results
+/playwright-report
+
+# caches from the GitHub initial commit
 .cache
 .eslintcache
-.turbo
 .swc
+.turbo

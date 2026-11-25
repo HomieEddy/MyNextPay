@@ -196,6 +196,8 @@ input:focus-visible {
   line-height: 1.05;
   margin: 4px 0 10px;
 }
+.big number-flow-react::part(fraction),
+.big number-flow-react::part(symbol decimal),
 .big small {
   font-size: 0.45em;
   letter-spacing: -0.02em;
@@ -1424,4 +1426,25 @@ a.wcard {
 .sheet.vd {
   transform: none;
   transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.np-toast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 auto;
+  width: max-content;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 99px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.np-toast-act {
+  border: 0;
+  background: none;
+  color: var(--orange2);
+  font-weight: 700;
+  min-height: 32px;
 }

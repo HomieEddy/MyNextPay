@@ -1,6 +1,6 @@
 import { Chip } from "@/components/ui/chip";
 import type { CycleStatus } from "@/domain/status";
-import { CountUp } from "./count-up";
+import { MoneyFlow } from "./money-flow";
 
 export function SafeHero({
   caption,
@@ -17,7 +17,7 @@ export function SafeHero({
     <div className="hero">
       <div className="cap">{caption}</div>
       <div className={`big num ${cents < 0 ? "neg" : ""}`}>
-        <CountUp cents={cents} />
+        <MoneyFlow cents={cents} />
       </div>
       <Chip status={status} label={statusLabel} />
     </div>

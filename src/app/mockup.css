@@ -196,6 +196,8 @@ input:focus-visible {
   line-height: 1.05;
   margin: 4px 0 10px;
 }
+.big number-flow-react::part(fraction),
+.big number-flow-react::part(symbol decimal),
 .big small {
   font-size: 0.45em;
   letter-spacing: -0.02em;

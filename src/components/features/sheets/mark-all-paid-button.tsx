@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { markAllPaid } from "@/server/actions/bills/mark-all-paid";
 
@@ -13,7 +14,13 @@ export function MarkAllPaidButton({ unpaid }: { unpaid: Occurrence[] }) {
   return (
     <Button
       disabled={pending}
-      onClick={() => startTransition(() => markAllPaid(unpaid).then(() => {}))}
+      onClick={() =>
+        startTransition(() =>
+          markAllPaid(unpaid).then(() => {
+            toast("All bills marked paid");
+          }),
+        )
+      }
     >
       Mark all paid
     </Button>

@@ -27,3 +27,19 @@ export function markBillUnpaid(db: Db, itemId: number, dueDate: IsoDate) {
     )
     .run();
 }
+
+/** Marks several occurrences paid in one transaction. */
+export function markBillsPaid(
+  db: Db,
+  occurrences: { itemId: number; dueDate: IsoDate }[],
+  paidOn: IsoDate,
+) {
+  db.transaction((tx) => {
+    for (const { itemId, dueDate } of occurrences) {
+      tx.insert(billPayment)
+        .values({ itemId, dueDate, paidOn })
+        .onConflictDoNothing()
+        .run();
+    }
+  });
+}

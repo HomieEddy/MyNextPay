@@ -1,4 +1,5 @@
 import { BillCheck } from "./bill-check";
+import { MarkAllPaidButton } from "./mark-all-paid-button";
 import type { SheetRow } from "./sheet-rows";
 
 export function BillsSheet({
@@ -29,6 +30,11 @@ export function BillsSheet({
           </BillCheck>
         ))}
       </div>
+      <MarkAllPaidButton
+        unpaid={rows
+          .filter((row) => !row.paid)
+          .map((row) => ({ itemId: row.itemId, dueDate: row.date }))}
+      />
       <p className="small mt-3">
         Total reserved: {total}. Paying a bill doesn't change safe-to-spend; it
         was already set aside.

@@ -8,19 +8,28 @@ import { Sheet } from "@/components/ui/sheet";
 import type { CycleSummary } from "@/domain/cycle-summary";
 import { formatMoney } from "@/domain/money";
 import { toEntryRows } from "@/lib/entry-rows";
-import { offsetHref } from "@/lib/home-view";
+import { offsetHref, sheetHref } from "@/lib/home-view";
 import { spendParts } from "@/lib/spend-parts";
 import { getDb } from "@/server/db/client";
 import { loadCycleEntries } from "@/server/queries/load-cycle-entries";
 import { appToday } from "@/server/today";
+import { EntrySheet } from "./entry-sheet";
 
-type Props = { sheet: string; summary: CycleSummary; offset: number };
+type Props = {
+  sheet: string;
+  entryId: number;
+  summary: CycleSummary;
+  offset: number;
+};
 
 /** Container for the sheets that open over Home. Picks the data each sheet needs. */
-export function HomeSheet({ sheet, summary, offset }: Props) {
+export function HomeSheet({ sheet, entryId, summary, offset }: Props) {
   const closeHref = offsetHref(offset) ?? "/";
   const simple = summary.mode === "simple";
 
+  if (sheet === "entry") {
+    return <EntrySheet id={entryId} closeHref={closeHref} />;
+  }
   if (sheet === "bills") {
     return (
       <Sheet title="Bills this cycle" closeHref={closeHref}>
@@ -54,6 +63,7 @@ export function HomeSheet({ sheet, summary, offset }: Props) {
           caption={summary.safeToSpend < 0 ? "deficit" : "free cash"}
           entries={toEntryRows(entries)}
           simple={simple}
+          editHref={(id) => `${sheetHref(offset, "entry")}&id=${id}`}
         />
       </Sheet>
     );

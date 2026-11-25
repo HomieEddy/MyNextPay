@@ -86,7 +86,7 @@ export function AddEntryForm({
       />
       <FormMessage message={result.ok ? undefined : result.error} />
       <Button type="submit" disabled={pending}>
-        Log it
+        {values.id === undefined ? "Log it" : "Save"}
       </Button>
     </form>
   );

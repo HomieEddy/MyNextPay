@@ -43,3 +43,32 @@ test("cycles and calendar show the paydays ahead", async ({ page }) => {
   await page.getByRole("link", { name: "Week" }).click();
   await expect(page.locator(".wk")).toHaveCount(7);
 });
+
+test("editing then deleting a logged expense", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/?sheet=spend");
+  await page.getByRole("link", { name: /Brake repair/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Edit expense" }),
+  ).toBeVisible();
+  await page.getByLabel("Amount").fill("300");
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByText("$300.00 unexpected")).toBeVisible();
+  await page.goto("/?sheet=spend");
+  await page.getByRole("link", { name: /Brake repair/ }).click();
+  await page.getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByText("$300.00 unexpected")).toBeHidden();
+});
+
+test("mark all paid ticks every bill", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/?sheet=bills");
+  await page.getByRole("button", { name: "Mark Rent unpaid" }).click();
+  await page.getByRole("button", { name: "Mark all paid" }).click();
+  await expect(
+    page.getByRole("button", { name: "Mark Rent unpaid" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Mark all paid" }),
+  ).toBeHidden();
+});

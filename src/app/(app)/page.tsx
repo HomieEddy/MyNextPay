@@ -15,7 +15,7 @@ import { HomeSheet } from "./_sheets/home-sheet";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage({ searchParams }: PageProps<"/">) {
-  const { c, sheet } = await searchParams;
+  const { c, sheet, id } = await searchParams;
   const offset = parseOffset(c);
   const db = getDb();
   const summary = loadCycle(db, offset);
@@ -53,7 +53,12 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
       />
       <CardStack cards={cards} />
       {typeof sheet === "string" && (
-        <HomeSheet sheet={sheet} summary={summary} offset={offset} />
+        <HomeSheet
+          sheet={sheet}
+          entryId={Number(id)}
+          summary={summary}
+          offset={offset}
+        />
       )}
     </>
   );

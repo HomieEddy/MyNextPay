@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useState } from "react";
+import { Drawer } from "vaul";
 
-/** Bottom sheet opened by a URL. Closing it goes back to `closeHref`. */
+/** Bottom sheet opened by a URL. Swipe down, Escape, the scrim or Close go back to `closeHref`. */
 export function Sheet({
   title,
   closeHref,
@@ -15,49 +15,31 @@ export function Sheet({
   children: ReactNode;
 }) {
   const router = useRouter();
-  const closeRef = useRef<HTMLAnchorElement>(null);
-
-  useEffect(() => {
-    closeRef.current?.focus({ preventScroll: true });
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") router.push(closeHref, { scroll: false });
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [closeHref, router]);
+  const [open, setOpen] = useState(true);
+  const leave = () => router.push(closeHref, { scroll: false });
 
   return (
-    <>
-      <Link
-        href={closeHref}
-        scroll={false}
-        className="scrim on"
-        aria-hidden="true"
-        tabIndex={-1}
-      />
-      <div
-        className="sheet on"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="sheet-title"
-      >
-        <div className="grab" />
-        <div className="sh">
-          <h2 id="sheet-title">{title}</h2>
-          <Link
-            ref={closeRef}
-            href={closeHref}
-            scroll={false}
-            className="icon-btn"
-            aria-label="Close"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </Link>
-        </div>
-        <div className="sb">{children}</div>
-      </div>
-    </>
+    <Drawer.Root
+      open={open}
+      onOpenChange={setOpen}
+      onAnimationEnd={(isOpen) => !isOpen && leave()}
+      repositionInputs={false}
+    >
+      <Drawer.Portal>
+        <Drawer.Overlay className="scrim on" />
+        <Drawer.Content className="sheet vd" aria-describedby={undefined}>
+          <div className="grab" />
+          <div className="sh">
+            <Drawer.Title>{title}</Drawer.Title>
+            <Drawer.Close className="icon-btn" aria-label="Close">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </Drawer.Close>
+          </div>
+          <div className="sb">{children}</div>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </Drawer.Root>
   );
 }

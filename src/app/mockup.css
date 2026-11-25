@@ -1434,6 +1434,11 @@ a.wcard {
 .sw2[role="switch"]::after {
   content: none;
 }
+/* Vaul drives the sheet's motion and drag; keep only the mockup's look. */
+.sheet.vd {
+  transform: none;
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
 .np-toast {
   display: flex;
   align-items: center;

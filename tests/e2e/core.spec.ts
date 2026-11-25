@@ -72,3 +72,29 @@ test("mark all paid ticks every bill", async ({ page }) => {
     page.getByRole("button", { name: "Mark all paid" }),
   ).toBeHidden();
 });
+
+test("backup, sample data, restore and erase", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/settings");
+  const downloading = page.waitForEvent("download");
+  await page.getByRole("link", { name: /Download a backup/ }).click();
+  const file = await (await downloading).path();
+
+  const sample = page.getByRole("button", { name: /Reload sample data/ });
+  await sample.click();
+  await sample.click();
+  await page.goto("/recurring");
+  await expect(page.getByText("Internet").first()).toBeVisible();
+
+  await page.goto("/settings");
+  await page.locator('input[type="file"]').setInputFiles(file);
+  await expect(page.getByText("Backup restored")).toBeVisible();
+  await page.goto("/recurring");
+  await expect(page.getByText("Internet")).toHaveCount(0);
+
+  await page.goto("/settings");
+  const erase = page.getByRole("button", { name: /Erase everything/ });
+  await erase.click();
+  await erase.click();
+  await expect(page).toHaveURL(/\/setup/);
+});

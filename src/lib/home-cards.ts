@@ -5,16 +5,18 @@ export type HomeCard = {
   title: string;
   value: string;
   detail: string;
-  tone: "bills" | "income" | "spend";
+  tone: "bills" | "income" | "spend" | "forecast";
+  href: string;
 };
 
-function thirdCard(summary: CycleSummary): HomeCard {
+type CardText = Omit<HomeCard, "tone" | "href">;
+
+function spendText(summary: CycleSummary): CardText {
   if (summary.mode === "ledger") {
     return {
       title: "Spending",
       value: formatMoney(summary.spent),
       detail: "Logged this cycle",
-      tone: "spend",
     };
   }
   const committed = Math.round(
@@ -24,16 +26,14 @@ function thirdCard(summary: CycleSummary): HomeCard {
     summary.spent > 0
       ? `${formatMoney(summary.spent)} unexpected`
       : "Bills vs. free cash";
-  return {
-    title: "Breakdown",
-    value: `${committed}% committed`,
-    detail,
-    tone: "spend",
-  };
+  return { title: "Breakdown", value: `${committed}% committed`, detail };
 }
 
-/** The Wallet-style cards under the hero. */
-export function homeCards(summary: CycleSummary): HomeCard[] {
+/** The Wallet-style cards under the hero. Each opens a sheet. */
+export function homeCards(
+  summary: CycleSummary,
+  hrefFor: (sheet: string) => string,
+): HomeCard[] {
   const bills = summary.billOccurrences;
   const paid = bills.filter((bill) => bill.paid).length;
   const incomeDetail =
@@ -46,13 +46,15 @@ export function homeCards(summary: CycleSummary): HomeCard[] {
       value: formatMoney(summary.bills),
       detail: `${paid} of ${bills.length} paid`,
       tone: "bills",
+      href: hrefFor("bills"),
     },
     {
       title: "Income",
       value: formatMoney(summary.income),
       detail: incomeDetail,
       tone: "income",
+      href: hrefFor("income"),
     },
-    thirdCard(summary),
+    { ...spendText(summary), tone: "spend", href: hrefFor("spend") },
   ];
 }

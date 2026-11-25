@@ -1,33 +1,15 @@
 import "server-only";
-import {
-  type CycleSummary,
-  computeCycle,
-  type LedgerEntry,
-  paidKey,
-} from "@/domain/cycle-summary";
+import { type CycleSummary, computeCycle } from "@/domain/cycle-summary";
 import type { Db } from "../db/client";
-import { listBillPayments } from "../repos/bill-payment-repo";
-import { listEntries } from "../repos/entry-repo";
-import { listRecurringItems } from "../repos/recurring-repo";
-import { findSettings } from "../repos/settings-repo";
 import { appToday } from "../today";
-import { toScheduledItem } from "./to-scheduled-item";
+import { loadSchedule } from "./load-schedule";
 
 /** The cycle `offset` away from today, or null before setup is finished. */
 export function loadCycle(db: Db, offset: number): CycleSummary | null {
-  const settings = findSettings(db);
-  if (!settings) return null;
+  const schedule = loadSchedule(db);
+  if (!schedule) return null;
 
-  const rows = listRecurringItems(db);
-  const entries: LedgerEntry[] = listEntries(db).map((e) => ({
-    kind: e.kind,
-    amount: e.amount,
-    date: e.date,
-  }));
-  const paidKeys = new Set(
-    listBillPayments(db).map((p) => paidKey(p.itemId, p.dueDate)),
-  );
-
+  const { settings } = schedule;
   return computeCycle({
     today: appToday(),
     offset,
@@ -38,9 +20,9 @@ export function loadCycle(db: Db, offset: number): CycleSummary | null {
     openingBalance: settings.openingBalance,
     openingBalanceDate: settings.openingBalanceDate,
     floor: settings.floor,
-    bills: rows.filter((r) => r.kind === "bill").map(toScheduledItem),
-    incomes: rows.filter((r) => r.kind === "income").map(toScheduledItem),
-    entries,
-    paidKeys,
+    bills: schedule.bills,
+    incomes: schedule.incomes,
+    entries: schedule.entries,
+    paidKeys: schedule.paidKeys,
   });
 }

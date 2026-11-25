@@ -1391,3 +1391,32 @@ h1.vt,
 .ph h2 {
   font-weight: 700;
 }
+
+/* Sheets are page-level here, not inside a phone frame. */
+.scrim {
+  position: fixed;
+  z-index: 20;
+}
+.sheet {
+  position: fixed;
+  z-index: 21;
+  max-width: 448px;
+  margin: 0 auto;
+}
+.sheet.on {
+  animation: sheet-up 0.45s cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(105%);
+  }
+}
+.top .icon-btn.add {
+  color: #fff;
+}
+a.wcard {
+  color: #fff;
+}
+.tabs {
+  grid-template-columns: repeat(5, 1fr);
+}

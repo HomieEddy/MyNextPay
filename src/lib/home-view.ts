@@ -1,7 +1,10 @@
 import type { CycleSummary } from "@/domain/cycle-summary";
+import { daysLeft } from "@/domain/cycles";
+import type { IsoDate } from "@/domain/dates";
 import { formatMoney } from "@/domain/money";
 import { type CycleStatus, STATUS_LABEL } from "@/domain/status";
 import { shortDate } from "./format-date";
+import { type HomeCard, homeCards } from "./home-cards";
 
 export const MIN_OFFSET = -2;
 export const MAX_OFFSET = 2;
@@ -21,58 +24,79 @@ export function offsetHref(offset: number): string | null {
   return offset === 0 ? "/" : `/?c=${offset}`;
 }
 
-export type HomeRow = {
-  label: string;
-  value: string;
-  detail: string;
-  tone: "orange" | "green" | "char";
-};
-
 export type HomeView = {
   periodLabel: string;
-  paydayLabel: string;
-  amount: string;
+  periodSub: string;
+  caption: string;
+  safeToSpend: number;
   status: CycleStatus;
   statusLabel: string;
   daysValue: string;
   daysLabel: string;
+  ringFraction: number;
   dailyValue: string;
-  rows: HomeRow[];
+  dailyLabel: string;
+  banner: { title: string; detail: string } | null;
+  cards: HomeCard[];
 };
 
-export function toHomeView(summary: CycleSummary): HomeView {
-  const { cycle, mode } = summary;
-  const unpaid = summary.billOccurrences.filter((bill) => !bill.paid).length;
-  const daysLabel =
-    mode === "ledger" && summary.isCurrent ? "days left" : "days in cycle";
+type Context = { today: IsoDate; offset: number; warn: boolean };
+
+function days(summary: CycleSummary, { today, offset }: Context) {
+  const length = summary.cycle.lengthDays;
+  if (offset === 0) {
+    const left = daysLeft(summary.cycle, today);
+    return {
+      value: String(left),
+      label: left === 1 ? "day left" : "days left",
+      ring: left / length,
+    };
+  }
   return {
-    periodLabel: `${shortDate(cycle.start)} – ${shortDate(cycle.end)}`,
-    paydayLabel: `Next payday ${shortDate(cycle.nextPayday)}`,
-    amount: formatMoney(summary.safeToSpend),
+    value: String(length),
+    label: "days long",
+    ring: offset < 0 ? 0 : 1,
+  };
+}
+
+function banner(
+  summary: CycleSummary,
+  context: Context,
+  left: string,
+): HomeView["banner"] {
+  if (
+    !context.warn ||
+    context.offset !== 0 ||
+    summary.safeToSpend >= summary.floor
+  )
+    return null;
+  return {
+    title: `${formatMoney(summary.floor - summary.safeToSpend)} below your ${formatMoney(summary.floor)} floor`,
+    detail: `${left} days until payday. Go easy until ${shortDate(summary.cycle.nextPayday)}.`,
+  };
+}
+
+function periodSub(summary: CycleSummary, offset: number): string {
+  if (offset === 0) return `Payday ${shortDate(summary.cycle.nextPayday)}`;
+  return offset < 0 ? "Past cycle" : "Coming up";
+}
+
+export function toHomeView(summary: CycleSummary, context: Context): HomeView {
+  const simple = summary.mode === "simple";
+  const left = days(summary, context);
+  return {
+    periodLabel: `${shortDate(summary.cycle.start)} – ${shortDate(summary.cycle.end)}`,
+    periodSub: periodSub(summary, context.offset),
+    caption: simple ? "Safe to spend this cycle" : "Safe to spend",
+    safeToSpend: summary.safeToSpend,
     status: summary.status,
     statusLabel: STATUS_LABEL[summary.status],
-    daysValue: String(summary.days),
-    daysLabel,
+    daysValue: left.value,
+    daysLabel: left.label,
+    ringFraction: left.ring,
     dailyValue: formatMoney(summary.dailyAllowance),
-    rows: [
-      {
-        label: "Bills",
-        value: formatMoney(summary.bills),
-        detail: `${unpaid} still to pay`,
-        tone: "orange",
-      },
-      {
-        label: "Income",
-        value: formatMoney(summary.income),
-        detail: "this cycle",
-        tone: "green",
-      },
-      {
-        label: mode === "ledger" ? "Spent" : "Unexpected",
-        value: formatMoney(summary.spent),
-        detail: "logged so far",
-        tone: "char",
-      },
-    ],
+    dailyLabel: simple ? "daily budget" : "a day",
+    banner: banner(summary, context, left.value),
+    cards: homeCards(summary),
   };
 }

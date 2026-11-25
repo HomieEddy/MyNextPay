@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form-message";
 import { Segmented } from "@/components/ui/segmented";
+import { SettingsRow } from "@/components/ui/settings-row";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/ui/text-field";
 import type { RecurringInput } from "@/lib/schemas/recurring";
@@ -28,7 +29,7 @@ export function RecurringForm({ initial }: { initial: RecurringInput }) {
         event.preventDefault();
         submit(values);
       }}
-      className="space-y-4"
+      className="space-y-1"
     >
       <Segmented
         label="Kind"
@@ -69,11 +70,19 @@ export function RecurringForm({ initial }: { initial: RecurringInput }) {
         onChange={patch}
       />
       {values.kind === "bill" && (
-        <Switch
-          label="Log it automatically when due"
-          checked={values.autoPay}
-          onChange={(autoPay) => patch({ autoPay })}
-        />
+        <div className="list">
+          <SettingsRow
+            label="Auto-pay"
+            hint="Marked paid on its due date"
+            htmlFor="autoPay"
+          >
+            <Switch
+              id="autoPay"
+              checked={values.autoPay}
+              onChange={(autoPay) => patch({ autoPay })}
+            />
+          </SettingsRow>
+        </div>
       )}
       <FormMessage message={result.ok ? undefined : result.error} />
       <Button type="submit" disabled={pending}>

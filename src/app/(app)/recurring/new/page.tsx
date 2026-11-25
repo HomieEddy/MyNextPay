@@ -5,14 +5,18 @@ import { appToday } from "@/server/today";
 
 export const dynamic = "force-dynamic";
 
-export default function NewRecurringPage() {
+export default async function NewRecurringPage({
+  searchParams,
+}: PageProps<"/recurring/new">) {
+  const { kind } = await searchParams;
+  const initial = blankRecurringInput(
+    kind === "income" ? "income" : "bill",
+    appToday(),
+  );
   return (
     <>
-      <ScreenHeading
-        title="New item"
-        intro="A bill you pay on a schedule, or money that comes in on one."
-      />
-      <RecurringForm initial={blankRecurringInput("bill", appToday())} />
+      <ScreenHeading title="New item" />
+      <RecurringForm initial={initial} />
     </>
   );
 }

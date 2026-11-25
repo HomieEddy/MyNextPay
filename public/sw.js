@@ -1,6 +1,6 @@
 // NextPay service worker. Caches only static assets and the offline page,
 // never money data: pages always come from the server when it is reachable.
-const CACHE = "nextpay-v1";
+const CACHE = "nextpay-v2";
 const OFFLINE = "/offline";
 const PRECACHE = [OFFLINE, "/icons/icon-192.png"];
 

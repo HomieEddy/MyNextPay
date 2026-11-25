@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { BrandMark } from "./brand-mark";
 
 export function TopBar() {
   return (
     <header className="top mx-auto max-w-md">
-      <span className="brand">NextPay</span>
+      <span className="brand">
+        <BrandMark />
+        NextPay
+      </span>
       <Link
         href="/?sheet=add"
         scroll={false}

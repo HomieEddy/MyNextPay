@@ -15,11 +15,12 @@ export function EntrySheet({
 }) {
   const row = findEntry(getDb(), id);
   if (!row) return null;
+  const input = toEntryInput(row);
   const title = row.kind === "income" ? "Edit income" : "Edit expense";
   return (
     <Sheet title={title} closeHref={closeHref}>
-      <AddEntryForm initial={toEntryInput(row)} closeHref={closeHref} />
-      <DeleteEntryButton id={row.id} closeHref={closeHref} />
+      <AddEntryForm initial={input} closeHref={closeHref} />
+      <DeleteEntryButton id={row.id} entry={input} closeHref={closeHref} />
     </Sheet>
   );
 }
